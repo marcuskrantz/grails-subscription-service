@@ -4,7 +4,7 @@ import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 class BootStrap {
 
     def init = { servletContext ->
-        SpringSecurityUtils.registerFilter("samlAuthenticationFilter", SecurityFilterPosition.PRE_AUTH_FILTER)
+        SpringSecurityUtils.registerFilter("samlAuthenticationFilter", SecurityFilterPosition.FORM_LOGIN_FILTER)
     }
     def destroy = {
     }

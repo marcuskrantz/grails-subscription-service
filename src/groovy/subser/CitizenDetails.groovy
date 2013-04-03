@@ -11,7 +11,7 @@ class CitizenDetails extends GrailsUser {
         super(crn, '', true, true, true, true, [new GrantedAuthority() {
             @Override
             String getAuthority() {
-                return "ROLE_USER"
+                return "ROLE_CITIZEN"
             }
         }], id)
 
@@ -20,5 +20,9 @@ class CitizenDetails extends GrailsUser {
 
     static newFromCitizen(Citizen citizen) {
         new CitizenDetails(citizen.id, citizen.civicRegistrationNumber, citizen.name)
+    }
+
+    static newFromSamlData(data) {
+        new CitizenDetails(-1, data["Subject_SerialNumber"], data["Subject_CommonName"])
     }
 }

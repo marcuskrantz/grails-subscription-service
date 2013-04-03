@@ -11,6 +11,8 @@ class SamlService {
 
     def generateAuthnRequest() {
 
+        log.debug("Generating a SAML AuthnRequest...")
+
         def requestId = UUID.randomUUID().toString()
         def ts = Calendar.instance.getTime().format("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
@@ -31,5 +33,20 @@ class SamlService {
         }
 
         return writer.toString()
+    }
+
+    def parseSamlResponse(String decoded) {
+
+        log.debug("Parsing SAML response...")
+
+        def xml = new XmlSlurper().parseText(decoded).declareNamespace(samlp: "urn:oasis:names:tc:SAML:2.0:protocol"
+                , saml: "urn:oasis:names:tc:SAML:2.0:assertion", ds: "http://www.w3.org/2000/09/xmldsig#")
+
+        def citizenData = [:]
+        xml.'Assertion'.'AttributeStatement'.'Attribute'.each {
+            citizenData[it.@Name.text()] = it.'AttributeValue'.text()
+        }
+
+        return citizenData
     }
 }

@@ -64,7 +64,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         saml.idp.url = "https://m10-mg-local.funktionstjanster.se/samlv2/idp/req/0/0?mgvhostparam=0"
-        saml.assertion.url = "http://localhost:8080/subser/protectedResource/complete"
+        saml.assertion.url = "http://localhost:8080/subser/sso/complete"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -80,7 +80,9 @@ log4j = {
         console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     }
 
+    debug   'grails.app'
     debug   'subser'
+    debug   'org.springframework.security'
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -93,9 +95,21 @@ log4j = {
            'org.springframework',
            'org.hibernate',
            'net.sf.ehcache.hibernate'
+           'resource'
+
+    root {
+        warn 'stdout'
+    }
 }
 
-grails.plugins.springsecurity.providerNames = [ 'daoAuthenticationProvider' ]
+grails.plugins.springsecurity.auth.loginFormUrl = '/sso/complete'
+grails.plugins.springsecurity.providerNames = [ 'samlAuthenticationProvider' ]
+grails.plugins.springsecurity.securityConfigType = "InterceptUrlMap"
+grails.plugins.springsecurity.interceptUrlMap = [
+        '/api/**' : ['ROLE_CITIZEN']
+]
+
 grails.plugins.springsecurity.filterChain.chainMap = [
-        '/saml/**' : 'samlAuthenticationFilter'
+        '/sso/complete*': 'samlAuthenticationFilter',
+        '/**' : 'JOINED_FILTERS'
 ]
